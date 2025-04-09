@@ -2,6 +2,7 @@ import { log } from "console";
 import { id } from "../middleware/authMiddleware";
 import profileService from "../service/profileService";
 import { resourceLimits } from "worker_threads";
+import { NextFunction, Response,Request } from "express";
 
 
 class profileController{
@@ -22,12 +23,21 @@ class profileController{
        }
     }
     
-    async updateUsername(req:any,res:any){
+    async updateUsername(req:Request,res:Response,next:NextFunction){
 
-    
+    try{
+
         const updatedProfile = await profileService.updateUsername(req.body)
 
         res.status(200).json({"updatedProfile":updatedProfile})
+
+
+    }
+    catch(err){
+
+        next(err)
+    }
+        
     
     }
 
@@ -38,7 +48,6 @@ class profileController{
         const updatedProfile = await profileService.updateEmail(req.body)
 
         res.status(200).json({"updatedProfile":updatedProfile})
-
 
     }
     
@@ -132,7 +141,7 @@ class profileController{
 
     }
 
-    getFollowing = async (req:any,res:any)=>{
+    getFollowing = async (req:Request,res:Response)=>{
 
         const profileId=req.params['profileId']
 
@@ -141,6 +150,13 @@ class profileController{
         res.status(200).json({"followings":followings})
     }
     
+    async updateProfilePic(path:string){
+
+        
+        profileService.updateProfilePic(path)
+
+
+    }
 }
 
 export default new profileController()

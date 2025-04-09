@@ -15,29 +15,52 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const notificationService_1 = __importDefault(require("../service/notificationService"));
 class NotificationController {
     constructor() {
-        this.addNotification = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            console.log("notificaiton hitted");
-            console.log(req.body);
-            const profileId = req.body.profileId;
-            const notification = req.body.notification;
-            const result = yield notificationService_1.default.addNotification(profileId, notification);
-            if (result) {
+        this.addNotification = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const profileId = req.body.profileId;
+                const notification = req.body.notification;
+                yield notificationService_1.default.addNotification(profileId, notification);
                 res.status(200);
             }
-            else {
-                res.status(422);
+            catch (err) {
+                next(err);
             }
         });
-        this.getNotificaion = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            console.log("hited get noti");
-            const profileId = req.params['profileId'];
-            console.log(profileId);
-            const notifications = yield notificationService_1.default.getNotifications(profileId);
-            if (notifications) {
+        this.getNotificaion = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const profileId = Number(req.params['profileId']);
+                console.log(profileId);
+                const notifications = yield notificationService_1.default.getNotifications(profileId);
+                console.log("uu", notifications);
                 res.status(200).json({ "notification": notifications });
             }
+            catch (err) {
+                next(err);
+            }
+        });
+    }
+    addReport(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("report heii");
+            const report = req.body;
+            console.log(report);
+            const result = yield notificationService_1.default.addReport(report);
+            if (result) {
+                res.json({ msg: "reported" });
+            }
             else {
-                res.status(503);
+                res.json({ msg: "try after some time" });
+            }
+        });
+    }
+    getReport(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const reports = yield notificationService_1.default.getReport();
+            if (reports) {
+                res.json({ report: reports });
+            }
+            else {
+                res.status(500);
             }
         });
     }

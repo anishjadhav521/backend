@@ -16,6 +16,7 @@ const config_1 = __importDefault(require("../configuration/config"));
 const profile_1 = require("../entities/profile");
 const user_1 = require("../entities/user");
 const authMiddleware_1 = require("../middleware/authMiddleware");
+const errorHandler_1 = require("../types/errorHandler");
 const profileRepository = config_1.default.getRepository(profile_1.Profile);
 const userRepository = config_1.default.getRepository(user_1.User);
 class profileRepo {
@@ -34,6 +35,12 @@ class profileRepo {
     }
     updateUsername(newUsername, profileId) {
         return __awaiter(this, void 0, void 0, function* () {
+            const user = userRepository.findOne({ where: {
+                    userId: authMiddleware_1.id
+                } });
+            if (!user) {
+                throw new errorHandler_1.AppError('user doesnt exist', 404);
+            }
             const updatedProfile = yield profileRepository.update({
                 id: profileId
             }, {

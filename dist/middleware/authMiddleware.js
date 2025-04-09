@@ -7,6 +7,7 @@ exports.id = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const authService_1 = require("../service/authService");
 const authentication = (req, res, next) => {
+    console.log('middleware');
     const token = req.cookies.authToken;
     if (token && token.startsWith('bearer')) {
         const tokenParts = token.split(' ');

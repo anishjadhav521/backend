@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const post_1 = require("./post");
 const profile_1 = require("./profile");
 const like_1 = require("./like");
+const enum_1 = require("../enums/enum");
 let User = class User {
 };
 exports.User = User;
@@ -21,6 +22,12 @@ __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], User.prototype, "userId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        enum: enum_1.Role
+    }),
+    __metadata("design:type", String)
+], User.prototype, "role", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -48,6 +55,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => like_1.Likes, (Likes) => Likes.user),
     __metadata("design:type", Array)
 ], User.prototype, "likes", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Boolean)
+], User.prototype, "status", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)({ name: "user5003" })
 ], User);

@@ -15,17 +15,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const authService_1 = __importDefault(require("../service/authService"));
 class authController {
     constructor() {
-        this.signUp = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const result = yield authService_1.default.signUp(req, res);
-            if (result != null) {
-                res.json({ 'msg': 'signup complete !!' });
+        this.signUp = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield authService_1.default.signUp(req, res);
+                res.status(200).json({ 'msg': 'signup complete !!' });
             }
-            else {
-                res.json({ 'msg': 'signup failed' });
+            catch (err) {
+                next(err);
             }
         });
-        this.logIn = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            authService_1.default.logIn(req, res);
+        this.logIn = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log("login hitted");
+                authService_1.default.logIn(req, res);
+                // res.status(200).json({msg:"logged in"})
+            }
+            catch (err) {
+                next(err);
+            }
+        });
+        this.logOut = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            res.clearCookie('authToken', {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'lax'
+            });
+            res.status(200).json({ msg: "logged out" });
         });
     }
 }

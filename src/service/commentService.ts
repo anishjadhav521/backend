@@ -2,8 +2,9 @@ import AppDataSource from "../configuration/config"
 import { Post } from "../entities/post"
 import { Profile } from "../entities/profile"
 import { Comment } from "../entities/comments"
-import { CommentDto } from "../dto/comment"
+import { CommentDto } from "../dto/commentDto"
 import { id } from "../middleware/authMiddleware"
+import { AppError } from "../types/errorHandler"
 
 const commentRepository = AppDataSource.getRepository(Comment)
 const profileRepository = AppDataSource.getRepository(Profile)
@@ -36,7 +37,7 @@ class CommentService{
 
         return await commentRepository.save(com);
 
-
+        
     }
 
     getComment = async(postId:any)=>{
@@ -88,6 +89,9 @@ class CommentService{
     }
 
     deleteComment = async(commentId:any)=>{
+
+        console.log(commentId);
+        
 
         const comment = await commentRepository.delete({
             id:commentId

@@ -15,6 +15,7 @@ const user_1 = require("./user");
 const follow_1 = require("./follow");
 const notification_1 = require("./notification");
 const comments_1 = require("./comments");
+const enum_1 = require("../enums/enum");
 let Profile = class Profile {
 };
 exports.Profile = Profile;
@@ -22,6 +23,10 @@ __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], Profile.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ enum: enum_1.Role }),
+    __metadata("design:type", String)
+], Profile.prototype, "role", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: null }),
     __metadata("design:type", String)
@@ -63,6 +68,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => comments_1.Comment, (comment) => comment.profile),
     __metadata("design:type", Array)
 ], Profile.prototype, "comments", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Profile.prototype, "resetToken", void 0);
 exports.Profile = Profile = __decorate([
     (0, typeorm_1.Entity)({ name: "profile5003" })
 ], Profile);

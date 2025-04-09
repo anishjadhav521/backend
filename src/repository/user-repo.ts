@@ -24,23 +24,29 @@ class userRepo{
         console.log("hiii");
         
 
-        return await userRepository.find({
+        const user = await userRepository.findOne({
             relations:{
-                // post:{
-                //   like:true
-                // },
-                post:true,
+                post:{
+                  like:{
+                    user:true
+                  }
+                },
+                // post:true,
                 profile:true,
 
             },where:{
 
                userId:id
         }}
+
+        
+
+        
     )
 
-
-    
-      }
+    return user;
+    // console.log(user!.post[0].like[0].user);
+  }
 
     async   getUsers(username:string){
 

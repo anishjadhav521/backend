@@ -5,6 +5,7 @@ import { Profile } from "../entities/profile"
 import { User } from "../entities/user"
 import { Post } from "../entities/post"
 import { Likes } from "../entities/like"
+import { Role } from "../enums/enum"
 
 const profileRepository = AppDataSource.getRepository(Profile)
 const userRepository = AppDataSource.getRepository(User)
@@ -30,7 +31,9 @@ class userService{
                 user:{
 
                     post:{
-                        like:true
+                        like:{
+                            user:true
+                        }
                     }
                 }
             },
@@ -44,11 +47,18 @@ class userService{
 
     async getAll(){
 
-       const users = await profileRepository.find()
+       let users = await profileRepository.find({
+        where:{
+            role:Role.User
+        }
+       })
+
+
+       console.log(users);
+       
 
        return users
 
-        
     }
 
     async deleteUser(profileId:any){
@@ -80,12 +90,6 @@ class userService{
             postRepository.query('delete from  post5004 where user_id = @0',[user?.userId])
 
             
-
-
-            
-
-
-
         //    const like = await likeRepository.findOneBy({post:user?.post})
 
         //    console.log(like);

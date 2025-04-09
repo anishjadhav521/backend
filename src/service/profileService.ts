@@ -5,6 +5,7 @@ import { Profile } from "../entities/profile";
 import { User } from "../entities/user";
 import { id } from "../middleware/authMiddleware";
 import profileRepo from "../repository/profile-repo"
+import { AppError } from "../types/errorHandler";
 
 const userRepository = AppDataSource.getRepository(User)
 const profileRepository = AppDataSource.getRepository(Profile)
@@ -179,6 +180,36 @@ class profileService{
         })
 
         return followings
+    }
+
+    async updateProfilePic(path:string){
+
+        const user = await userRepository.findOne({
+
+             where:{
+
+                userId:id
+
+             },
+
+                relations:{
+
+                    profile:true
+                }
+            }
+        )
+
+        if(!user){
+
+            throw new AppError('user not found',404)
+        }
+
+
+        user.profile.profilePic = path;
+
+
+        userRepository.save(user);
+
     }
     
 }

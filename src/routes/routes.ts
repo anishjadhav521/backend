@@ -1,5 +1,6 @@
-import express, { Router } from "express"
-import authController from "../controller/authController"
+import express, { NextFunction, Request, Response, Router } from "express"
+// import authController from "../controller/authController"
+import authController  from "../controller/authController"
 import multer from "multer"
 import postController from "../controller/postController"
 import authentication from "../middleware/authMiddleware"
@@ -7,20 +8,27 @@ import userController from "../controller/userController"
 import profileController from "../controller/profileController"
 import notification from "../controller/notification"
 import CommnetController from "../controller/commnetController"
+import path from "path";
+// import { log } from "console"
 
+
+const uploadPath = path.join(__dirname,'..','..','..','final-project-angular','frontend','public','assets')
+
+
+// C:\Users\AnishJadhavINDev\Documents\final project angular\frontend\public
 
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'src/uploads/');
+        cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + '-' + file.originalname);
     }
 });
 
-let path: string
-let caption: string
+let path1: string
+
 const upload = multer({ storage: storage });
 
 const routes = express.Router()
@@ -32,17 +40,44 @@ routes.patch('/updateEmail',authentication,profileController.updateEmail)
 routes.patch('/updatePhoneNumber',authentication,profileController.updatePhoneNumber)
 routes.patch('/updateBio',authentication,profileController.updateBio)
 routes.patch('/updatePassword',authentication,profileController.updatePassword)
+routes.patch('/updateProfile',authentication,upload.single('file'),async (req:Request,res:Response,next:NextFunction)=>{
+
+    try{
+
+    console.log("hited update profilepoic");
+    
+
+    let path = req.file?.filename
+
+    await profileController.updateProfilePic(path!)
+
+    res.status(200).json({msg:'profile updated successfully'})
+
+    }
+    catch(err){
+
+        next(err)
+
+    }
+    
+
+
+} )
+
 
 routes.post('/signup', authController.signUp)
 routes.post('/login', authController.logIn)
+routes.get('/logout',authController.logOut)
 
 routes.get('/getPost', authentication, postController.getPost)
 routes.post('/addPost', authentication, upload.single('file'), async (req: any, res: any) => {
 
-    path = req.file.path
+    path1 = req.file.filename
+    console.log(req.file.filename);
+    
     const { caption } = req.body
 
-    const result = await postController.addPost(path, caption)
+    const result = await postController.addPost(path1, caption)
     
     if (result == "user not found") {
 
@@ -54,6 +89,10 @@ routes.post('/addPost', authentication, upload.single('file'), async (req: any, 
     }
 });
 
+routes.delete('/deletePost/:postId',authentication,postController.deletePost)
+
+
+
 routes.get('/getUser', authentication, userController.getUser)
 routes.get('/getUsers/:username',authentication,userController.getUsers)
 routes.get('/getUser/:username',authentication,userController.getUserByUsername)
@@ -61,6 +100,7 @@ routes.get('/getUser/:username',authentication,userController.getUserByUsername)
 // routes.patch('/updateLike',authentication,postController.updateLike)
 
 routes.post('/addLike',authentication,postController.addLike)
+routes.delete('/deleteLike/:postId',authentication,postController.deletLike)
 
 
 routes.post('/follow',authentication,profileController.follow)
@@ -79,6 +119,15 @@ routes.delete('/deleteComment/:commentId',authentication,CommnetController.delet
 
 routes.get('/getAllUsers',authentication,userController.getAll)
 routes.delete('/deleteUser/:userId',authentication,userController.deleteUser)
+
+routes.post('/report',authentication,notification.addReport)
+routes.get('/getReports',authentication,notification.getReport)
+
+
+routes.post('/auth/reset-pass',authentication,)
+
+
+
 
 
 

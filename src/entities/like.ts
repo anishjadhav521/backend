@@ -19,7 +19,7 @@ export class Likes{
     @ManyToOne(()=>Post,(post)=>post.like,{onDelete:"CASCADE"})
     post:Post
 
-    @Column()
-    isLiked : boolean
+    // @Column()
+    // isLiked : boolean
 
 }

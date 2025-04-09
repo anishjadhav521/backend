@@ -5,6 +5,7 @@ import { id } from "../middleware/authMiddleware";
 import { Likes } from "../entities/like";
 import userRepo from "./user-repo";
 import { User } from "../entities/user";
+import { AppError } from "../types/errorHandler";
 
 const postRepo = AppDataSource.getRepository(Post);
 const likeRepo = AppDataSource.getRepository(Likes);
@@ -23,9 +24,25 @@ class postRepository{
          userId:id
       })
 
-      const posts = await postRepo.findBy({
-         user:user
-      })
+      if(!user){
+
+        throw new AppError('user not found',404)
+      }
+
+      const posts = await postRepo.find({
+        where:{
+          user:user
+       },
+       order:{
+
+        PostId:"DESC"
+
+       }
+      }
+        
+        
+       
+     )
 
       return posts;
       

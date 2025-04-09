@@ -23,11 +23,14 @@ export class Post {
     @Column({default:null})
     caption:string
 
-    @ManyToOne(()=>User,(user)=>user.post,{onDelete:"CASCADE"})
+    @ManyToOne(()=>User,(user)=>user.post,{onDelete:"SET NULL"})
     @JoinColumn({name:"user_id"})
     user?:User
 
-    @OneToMany(()=>Likes,(like)=>like)
+    @OneToMany(()=>Likes,(like)=>like.post)
     like : Likes[]
+
+    @Column({default:0})
+    likesCount:number
     
 }

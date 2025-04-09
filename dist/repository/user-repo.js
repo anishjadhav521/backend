@@ -28,17 +28,21 @@ class userRepo {
     getUser(id) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("hiii");
-            return yield userRepository.find({
+            const user = yield userRepository.findOne({
                 relations: {
-                    // post:{
-                    //   like:true
-                    // },
-                    post: true,
+                    post: {
+                        like: {
+                            user: true
+                        }
+                    },
+                    // post:true,
                     profile: true,
                 }, where: {
                     userId: id
                 }
             });
+            return user;
+            // console.log(user!.post[0].like[0].user);
         });
     }
     getUsers(username) {

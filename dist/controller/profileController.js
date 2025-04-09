@@ -62,10 +62,15 @@ class profileController {
             }
         });
     }
-    updateUsername(req, res) {
+    updateUsername(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const updatedProfile = yield profileService_1.default.updateUsername(req.body);
-            res.status(200).json({ "updatedProfile": updatedProfile });
+            try {
+                const updatedProfile = yield profileService_1.default.updateUsername(req.body);
+                res.status(200).json({ "updatedProfile": updatedProfile });
+            }
+            catch (err) {
+                next(err);
+            }
         });
     }
     updateEmail(req, res) {
@@ -94,6 +99,11 @@ class profileController {
             // console.log(req.body.newEmail);
             const updatedProfile = yield profileService_1.default.updatePassword(req.body);
             res.status(200).json({ "updatedProfile": updatedProfile });
+        });
+    }
+    updateProfilePic(path) {
+        return __awaiter(this, void 0, void 0, function* () {
+            profileService_1.default.updateProfilePic(path);
         });
     }
 }

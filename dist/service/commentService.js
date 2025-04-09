@@ -52,6 +52,7 @@ class CommentService {
             // console.log(comments);
         });
         this.deleteComment = (commentId) => __awaiter(this, void 0, void 0, function* () {
+            console.log(commentId);
             const comment = yield commentRepository.delete({
                 id: commentId
             });

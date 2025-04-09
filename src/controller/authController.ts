@@ -1,25 +1,60 @@
+import { NextFunction, Response,Request } from "express";
 import authService from "../service/authService"
+import { AppError } from "../types/errorHandler";
+import { log } from "console";
 
 
 class authController {
 
-    signUp = async (req: any, res: any) => {
+    signUp = async (req: Request, res: Response,next: NextFunction) => {
 
-        const result = await authService.signUp(req, res)
+        try{
 
-        if (result != null) {
-            res.json({ 'msg': 'signup complete !!' });
+            const result = await authService.signUp(req, res)
+
+            res.status(200).json({ 'msg': 'signup complete !!' });
+        
         }
-        else {
-            res.json({ 'msg': 'signup failed' })
+        catch(err){
+            
+            next(err);
+
         }
     }
 
-    logIn = async (req: any, res: any) => {
+    logIn = async (req: Request, res: Response,next:NextFunction) => {
+
+        try{
+
+            console.log("login hitted");
+            
+
+            authService.logIn(req, res);
+            // res.status(200).json({msg:"logged in"})
+
+        }
+        catch(err){
 
 
 
-        authService.logIn(req, res);
+            next(err)
+
+        }
+
+       
+    }
+
+    logOut = async(req: any, res: any)=>{
+
+        res.clearCookie('authToken',{
+
+            httpOnly:true,
+            secure:true,
+            sameSite:'lax'
+        })
+        res.status(200).json({msg:"logged out"})
+
+
     }
 
 

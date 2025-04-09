@@ -6,7 +6,8 @@ import { Response } from "express";
 export let id: number
 
 const authentication = (req: Request, res: Response, next: () => void) => {
-
+    console.log('middleware');
+    
     const token = req.cookies.authToken
 
     if (token && token.startsWith('bearer')) {

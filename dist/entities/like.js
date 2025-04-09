@@ -26,12 +26,11 @@ __decorate([
 ], Likes.prototype, "user", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => post_1.Post, (post) => post.like, { onDelete: "CASCADE" }),
-    __metadata("design:type", post_1.Post)
+    __metadata("design:type", post_1.Post
+    // @Column()
+    // isLiked : boolean
+    )
 ], Likes.prototype, "post", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Boolean)
-], Likes.prototype, "isLiked", void 0);
 exports.Likes = Likes = __decorate([
     (0, typeorm_1.Entity)({ name: "likes5004" })
     // @Unique(['user','post'])

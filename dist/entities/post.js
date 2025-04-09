@@ -38,14 +38,18 @@ __decorate([
     __metadata("design:type", String)
 ], Post.prototype, "caption", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_1.User, (user) => user.post, { onDelete: "CASCADE" }),
+    (0, typeorm_1.ManyToOne)(() => user_1.User, (user) => user.post, { onDelete: "SET NULL" }),
     (0, typeorm_1.JoinColumn)({ name: "user_id" }),
     __metadata("design:type", user_1.User)
 ], Post.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => like_1.Likes, (like) => like),
+    (0, typeorm_1.OneToMany)(() => like_1.Likes, (like) => like.post),
     __metadata("design:type", Array)
 ], Post.prototype, "like", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
+    __metadata("design:type", Number)
+], Post.prototype, "likesCount", void 0);
 exports.Post = Post = __decorate([
     (0, typeorm_1.Entity)({ name: "post5004" })
 ], Post);

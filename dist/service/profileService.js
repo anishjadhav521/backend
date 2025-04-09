@@ -18,6 +18,7 @@ const profile_1 = require("../entities/profile");
 const user_1 = require("../entities/user");
 const authMiddleware_1 = require("../middleware/authMiddleware");
 const profile_repo_1 = __importDefault(require("../repository/profile-repo"));
+const errorHandler_1 = require("../types/errorHandler");
 const userRepository = config_1.default.getRepository(user_1.User);
 const profileRepository = config_1.default.getRepository(profile_1.Profile);
 const followRepository = config_1.default.getRepository(follow_1.Follow);
@@ -149,6 +150,23 @@ class profileService {
                 }
             });
             return followings;
+        });
+    }
+    updateProfilePic(path) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield userRepository.findOne({
+                where: {
+                    userId: authMiddleware_1.id
+                },
+                relations: {
+                    profile: true
+                }
+            });
+            if (!user) {
+                throw new errorHandler_1.AppError('user not found', 404);
+            }
+            user.profile.profilePic = path;
+            userRepository.save(user);
         });
     }
 }

@@ -1,8 +1,9 @@
+import { Response ,Request} from "express";
 import commentService from "../service/commentService"
 
 class CommentController{
 
-    addComment = async(req:any,res:any)=>{
+    addComment = async(req:Request,res:Response)=>{
 
         console.log("hited comment");
         
@@ -23,7 +24,7 @@ class CommentController{
 
     }
 
-    getComment = async(req:any , res:any)=>{
+    getComment = async(req:Request , res:Response)=>{
 
         console.log("get comment");
         
@@ -47,7 +48,7 @@ class CommentController{
 
     }
 
-    deleteComment = async(req:any , res:any)=>{
+    deleteComment = async(req:Request , res:Response)=>{
 
         const commentId =  req.params['commentId']
         

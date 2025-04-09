@@ -4,25 +4,73 @@ import { Profile } from "../entities/profile";
 import { User } from "../entities/user";
 import jwt from "jsonwebtoken";
 import AppDataSource from "../configuration/config";
+import { Role } from "../enums/enum";
+import { AppError } from "../types/errorHandler";
+import { error, log } from "console";
+import { plainToInstance } from "class-transformer";
+import { SignUpDto } from "../dto/signupDto";
+import { validate, Validate } from "class-validator";
+import { loginDto } from "../dto/loginDto";
+import { Request, Response } from "express";
 
 export const secretKey = "ansh";
 
 const userRepo = AppDataSource.getRepository(User)
+const profileRepo = AppDataSource.getRepository(Profile)
 
 class AuthService {
+
     signUp = async (req: any, res: any) => {
 
         const { userName, password, email, fullName, phoneNumber } = req.body;
+
+
+        const userExist = await profileRepo.findOne({
+            where:{
+                email:email
+            }
+        })
+        if(userExist){
+
+            throw new AppError('email already exists',409)
+
+        }
+        const userExist1 = await profileRepo.findOne({
+            where:{
+                userName:userName
+            }
+        })
+        if(userExist1){
+
+            throw new AppError('username already exists',409)
+
+        }
+
+
+        const userDto = plainToInstance(SignUpDto,req.body)
+
+        const errors = await validate(userDto)
+
+        if(errors.length>0){
+
+            throw new AppError('invalid data',400)
+
+        }
+
+        console.log(userDto);
+        
 
         const profile = new Profile();
         profile.email = email;
         profile.phoneNumber = phoneNumber;
         profile.userName = userName
+        profile.role = Role.User
 
         const user = new User();
         user.fullName = fullName;
         user.phoneNumber = phoneNumber
         user.password = password;
+        user.role = Role.User
 
         user.profile = profile
         user.post = [];
@@ -30,23 +78,91 @@ class AuthService {
         return await authRepo.signUp(user);
     };
 
-    logIn = async (req: any, res: any) => {
 
-        const profile = await authRepo.findProfile(req.body.email);
+    logIn = async (req: Request, res: Response) => {
+        
+       
+        const credentialDto = plainToInstance(loginDto,req.body)
+        const errors = await validate(credentialDto);
+        if(errors.length){
 
+            throw new AppError('invalid data',400)
+        }
+
+        console.log(credentialDto);
+        
+        const isEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(req.body.identifier)
+        
+
+        let profile;
+  
+        if(isEmail){
+
+            console.log(credentialDto.email);
+            
+            profile = await profileRepo.findOne({
+                
+                where:{
+
+                    email:req.body.identifier
+
+                },
+                relations:{
+                    user:true
+                }
+                
+            });
+
+        }
+        else{
+            console.log("else",req.body.identifier);
+
+            profile = await profileRepo.findOne({
+
+                where:{
+
+                    userName:req.body.identifier
+
+                    // isEmail?{email:req.body.email}:{username:credentialDto.email}
+                },
+                relations:{
+
+                    user:true
+                }
+                
+            });
+        }
+
+        console.log(profile);
+        
+        
         if (!profile) {
-            res.status(400).json({ msg: "user not found" });
+
+            // res.status(400).j    son({ msg: "user not found" });
+            console.log("profile err");
+            
+            throw new AppError('user not found',404)
+
         } else {
-            if (req.body.password === profile?.user.password) {
+            if (credentialDto.password === profile?.user.password) {
                 const token = jwt.sign({ id: profile?.user.userId }, secretKey, { expiresIn: '1h' });
                 const tokenWtBearer = 'bearer ' + token;
-                res.cookie('authToken', tokenWtBearer);
+                res.cookie('authToken', tokenWtBearer,{
+                    secure:true,
+                    httpOnly:true,
+                    sameSite:'lax'
+                });
+                console.log("success fullu");
+                
                 res.status(200).json({ msg: "logged in" });
             } else {
-                res.status(401).json({ msg: "wrong credential" });
+                console.log("erroroororo");
+                
+                throw new AppError('wrong credential',401)
             }
         }
     };
+
 }
 
 export default new AuthService();

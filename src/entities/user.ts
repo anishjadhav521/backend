@@ -3,13 +3,20 @@ import { Post } from "./post";
 import { Comment } from "./comments";
 import { Profile } from "./profile";
 import { Likes } from "./like";
+import { Role } from "../enums/enum";
 
+                                 
 
 @Entity({name:"user5003"})
 export class User{
 
     @PrimaryGeneratedColumn()
     userId?:number;
+
+    @Column({
+        enum:Role
+    })
+    role:Role
 
     @Column()
     fullName:string;
@@ -37,4 +44,10 @@ export class User{
 
     @OneToMany(()=>Likes,(Likes)=>Likes.user)
     likes:Likes[]
+
+    @Column({nullable:true})
+    status:boolean
+
+    
+
 }

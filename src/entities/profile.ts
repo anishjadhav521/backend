@@ -3,12 +3,18 @@ import { User } from "./user";
 import { Follow } from "./follow";
 import { Notification } from "./notification";
 import { Comment } from "./comments";
+import { Role } from "../enums/enum";
 
 @Entity({ name: "profile5003" })
 export class Profile {
 
     @PrimaryGeneratedColumn()
     id?: number;
+
+    @Column(
+        {enum:Role}
+    )
+    role:Role
 
     @Column({default:null})
     bio: string;
@@ -40,5 +46,11 @@ export class Profile {
 
     @OneToMany(()=>Comment,(comment)=>comment.profile)
     comments:Comment[]
+
+    @Column({nullable:true})
+    resetToken:string
+
+    // @Column({nullable:true,type:"timestamp"})
+    // resetTokenExpiry:Date   
 
 }

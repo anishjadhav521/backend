@@ -19,6 +19,7 @@ const profile_1 = require("../entities/profile");
 const user_1 = require("../entities/user");
 const post_1 = require("../entities/post");
 const like_1 = require("../entities/like");
+const enum_1 = require("../enums/enum");
 const profileRepository = config_1.default.getRepository(profile_1.Profile);
 const userRepository = config_1.default.getRepository(user_1.User);
 const postRepository = config_1.default.getRepository(post_1.Post);
@@ -37,7 +38,9 @@ class userService {
                 relations: {
                     user: {
                         post: {
-                            like: true
+                            like: {
+                                user: true
+                            }
                         }
                     }
                 },
@@ -49,7 +52,12 @@ class userService {
     }
     getAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            const users = yield profileRepository.find();
+            let users = yield profileRepository.find({
+                where: {
+                    role: enum_1.Role.User
+                }
+            });
+            console.log(users);
             return users;
         });
     }

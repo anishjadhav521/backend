@@ -22,6 +22,7 @@ require("reflect-metadata");
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const message_1 = require("./entities/message");
+const error_1 = require("./middleware/error");
 const app = (0, express_1.default)();
 const port = 200;
 app.use((0, cookie_parser_1.default)());
@@ -38,6 +39,7 @@ app.use((0, cors_1.default)({
 }));
 app.use(express_1.default.json());
 app.use("/", routes_1.default);
+app.use(error_1.globalErrorHandler);
 config_1.default.initialize().then(() => {
     // app.listen(port,()=>{
     //     console.log(`listening on port ${port}`);
@@ -45,9 +47,8 @@ config_1.default.initialize().then(() => {
     server.listen(port, () => {
         console.log("listening on port ", port);
     });
-}).catch((err) => {
-    console.log(err);
-    console.log("err hai bhai");
+}).catch((error) => {
+    console.log(error);
 });
 io.on("connection", (socket) => {
     console.log("user connected", socket.id);
