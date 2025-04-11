@@ -50,11 +50,21 @@ class userRepo{
 
     async   getUsers(username:string){
 
-       const users =  await profileRepository.createQueryBuilder('profile').
-       where("profile.userName LIKE :name",{name: `%${username}%` })
-       .getMany();
+      //  const users =  await profileRepository.createQueryBuilder('profile').
+      //  where("profile.userName LIKE :name",{name: `%${username}%` }).andWhere({
+      
+      //  })
+      //  .getMany();
 
-       console.log( users);
+      
+const users = await profileRepository.createQueryBuilder('profile')
+    .where("profile.userName LIKE :name", { name: `%${username}%` })
+    .andWhere("profile.status = :status", { status: false })
+    .getMany();
+
+
+
+       console.log("users", users);
        return users
        
 

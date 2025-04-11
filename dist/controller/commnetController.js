@@ -38,14 +38,19 @@ class CommentController {
                 res.status(500);
             }
         });
-        this.deleteComment = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const commentId = req.params['commentId'];
-            const result = yield commentService_1.default.deleteComment(commentId);
-            if (result) {
-                res.status(200);
+        this.deleteComment = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const commentId = req.params['commentId'];
+                const result = yield commentService_1.default.deleteComment(commentId);
+                if (result) {
+                    res.status(200);
+                }
+                else {
+                    res.status(500);
+                }
             }
-            else {
-                res.status(500);
+            catch (err) {
+                next(err);
             }
         });
     }

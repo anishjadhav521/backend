@@ -112,7 +112,6 @@ routes.get('/getFollowing/:profileId',authentication,profileController.getFollow
 routes.get('/getNotification/:profileId',authentication,notification.getNotificaion)
 routes.post('/addNotification/',authentication,notification.addNotification)
 
-
 routes.post('/addComment',authentication,CommnetController.addComment)
 routes.get('/getComments/:postId',authentication,CommnetController.getComment)
 routes.delete('/deleteComment/:commentId',authentication,CommnetController.deleteComment)

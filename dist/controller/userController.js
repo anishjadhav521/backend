@@ -16,12 +16,17 @@ const user_repo_1 = __importDefault(require("../repository/user-repo"));
 const userService_1 = __importDefault(require("../service/userService"));
 class userController {
     constructor() {
-        this.getUserByUsername = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            console.log("get user by username");
-            const username = req.params['username'];
-            const user = yield userService_1.default.getUserByUsername(username);
-            console.log(user);
-            res.json({ "user": user });
+        this.getUserByUsername = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log("get user by username");
+                const username = req.params['username'];
+                const user = yield userService_1.default.getUserByUsername(username);
+                console.log(user);
+                res.json({ "user": user });
+            }
+            catch (err) {
+                next(err);
+            }
         });
         this.getUser = (req, res) => __awaiter(this, void 0, void 0, function* () {
             console.log("hited getuser");
@@ -32,6 +37,7 @@ class userController {
         this.getUsers = (req, res) => __awaiter(this, void 0, void 0, function* () {
             let username = req.params['username'];
             const users = yield user_repo_1.default.getUsers(username);
+            console.log(users);
             res.status(200).json({ "users": users });
         });
         this.getAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -43,10 +49,16 @@ class userController {
                 res.status(500);
             }
         });
-        this.deleteUser = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            console.log("delete hitted");
-            const profileId = req.params['userId'];
-            const result = yield userService_1.default.deleteUser(profileId);
+        this.deleteUser = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log("delete hitted");
+                const profileId = req.params['userId'];
+                yield userService_1.default.deleteUser(profileId);
+                res.status(200).json({ msg: 'deleted' });
+            }
+            catch (err) {
+                next(err);
+            }
         });
     }
 }

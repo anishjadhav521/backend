@@ -16,6 +16,7 @@ const config_1 = __importDefault(require("../configuration/config"));
 const post_1 = require("../entities/post");
 const profile_1 = require("../entities/profile");
 const comments_1 = require("../entities/comments");
+const errorHandler_1 = require("../types/errorHandler");
 const commentRepository = config_1.default.getRepository(comments_1.Comment);
 const profileRepository = config_1.default.getRepository(profile_1.Profile);
 const postRepository = config_1.default.getRepository(post_1.Post);
@@ -56,6 +57,9 @@ class CommentService {
             const comment = yield commentRepository.delete({
                 id: commentId
             });
+            if (!comment) {
+                throw new errorHandler_1.AppError('internal server error ', 500);
+            }
             return comment;
         });
     }

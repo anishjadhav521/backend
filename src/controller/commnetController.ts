@@ -1,4 +1,4 @@
-import { Response ,Request} from "express";
+import { Response ,Request, NextFunction} from "express";
 import commentService from "../service/commentService"
 
 class CommentController{
@@ -44,31 +44,26 @@ class CommentController{
 
             res.status(500)
         }
-
-
     }
 
-    deleteComment = async(req:Request , res:Response)=>{
+    deleteComment = async(req:Request , res:Response,next:NextFunction)=>{
+
+    try{
 
         const commentId =  req.params['commentId']
-        
-
-       const result = await commentService.deleteComment(commentId)
-
-       if(result){
-
-        res.status(200)
-       }
-       else{    
-
-        res.status(500)
-       }
-
-
+        const result = await commentService.deleteComment(commentId)
+            if(result){
+            res.status(200)
+        }
+        else{
+            res.status(500)
+        }
     }
+    catch(err){
 
-
-
+        next(err)
+    }
+    }
 }
 
 export default new CommentController()

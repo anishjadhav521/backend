@@ -19,6 +19,9 @@ const user_1 = require("../entities/user");
 const authMiddleware_1 = require("../middleware/authMiddleware");
 const profile_repo_1 = __importDefault(require("../repository/profile-repo"));
 const errorHandler_1 = require("../types/errorHandler");
+const updateDto_1 = require("../dto/updateDto");
+const class_transformer_1 = require("class-transformer");
+const class_validator_1 = require("class-validator");
 const userRepository = config_1.default.getRepository(user_1.User);
 const profileRepository = config_1.default.getRepository(profile_1.Profile);
 const followRepository = config_1.default.getRepository(follow_1.Follow);
@@ -30,6 +33,12 @@ class profileService {
     }
     updateUsername(body) {
         return __awaiter(this, void 0, void 0, function* () {
+            const updateProfileDto = (0, class_transformer_1.plainToInstance)(updateDto_1.updateDto, body);
+            const error = yield (0, class_validator_1.validate)(updateProfileDto);
+            if (error.length) {
+                throw new errorHandler_1.AppError('invalid data', 400);
+            }
+            console.log(updateProfileDto);
             return yield profile_repo_1.default.updateUsername(body.newUsername, body.profileId);
         });
     }
@@ -127,13 +136,15 @@ class profileService {
             const followers = yield followRepository.find({
                 where: {
                     following: {
-                        id: Number(profileId)
+                        id: Number(profileId),
+                        status: false
                     }
                 },
                 relations: {
                     followers: true
                 }
             });
+            console.log(followers);
             return followers;
         });
     }
@@ -142,7 +153,8 @@ class profileService {
             const followings = yield followRepository.find({
                 where: {
                     followers: {
-                        id: Number(profileId)
+                        id: Number(profileId),
+                        status: false
                     }
                 },
                 relations: {

@@ -27,10 +27,11 @@ class authController {
         this.logIn = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log("login hitted");
-                authService_1.default.logIn(req, res);
+                yield authService_1.default.logIn(req, res, next);
                 // res.status(200).json({msg:"logged in"})
             }
             catch (err) {
+                // console.log(err);
                 next(err);
             }
         });

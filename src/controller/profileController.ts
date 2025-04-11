@@ -27,6 +27,8 @@ class profileController{
 
     try{
 
+        console.log(req.body);
+
         const updatedProfile = await profileService.updateUsername(req.body)
 
         res.status(200).json({"updatedProfile":updatedProfile})
@@ -128,12 +130,10 @@ class profileController{
 
         console.log(profileId);
         
-
         const followers = await profileService.getFollowers(profileId)
 
         console.log(followers);
         
-
         res.status(200).json({"followers":followers})
 
 

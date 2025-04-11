@@ -65,6 +65,7 @@ class profileController {
     updateUsername(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log(req.body);
                 const updatedProfile = yield profileService_1.default.updateUsername(req.body);
                 res.status(200).json({ "updatedProfile": updatedProfile });
             }

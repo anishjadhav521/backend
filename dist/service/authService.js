@@ -54,20 +54,22 @@ class AuthService {
             }
             console.log(userDto);
             const profile = new profile_1.Profile();
-            profile.email = email;
-            profile.phoneNumber = phoneNumber;
-            profile.userName = userName;
+            profile.email = userDto.email;
+            profile.phoneNumber = userDto.phoneNumber;
+            profile.userName = userDto.userName;
             profile.role = enum_1.Role.User;
+            profile.status = false;
             const user = new user_1.User();
-            user.fullName = fullName;
-            user.phoneNumber = phoneNumber;
-            user.password = password;
+            user.fullName = userDto.fullName;
+            user.phoneNumber = userDto.phoneNumber;
+            user.password = userDto.password;
             user.role = enum_1.Role.User;
+            user.status = false;
             user.profile = profile;
             user.post = [];
             return yield auth_repo_1.default.signUp(user);
         });
-        this.logIn = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.logIn = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const credentialDto = (0, class_transformer_1.plainToInstance)(loginDto_1.loginDto, req.body);
             const errors = yield (0, class_validator_1.validate)(credentialDto);
             if (errors.length) {
@@ -100,7 +102,7 @@ class AuthService {
                 });
             }
             console.log(profile);
-            if (!profile) {
+            if (!profile || profile.status === true) {
                 // res.status(400).j    son({ msg: "user not found" });
                 console.log("profile err");
                 throw new errorHandler_1.AppError('user not found', 404);
@@ -112,7 +114,8 @@ class AuthService {
                     res.cookie('authToken', tokenWtBearer, {
                         secure: true,
                         httpOnly: true,
-                        sameSite: 'lax'
+                        sameSite: 'lax',
+                        maxAge: 60 * 60 * 1000
                     });
                     console.log("success fullu");
                     res.status(200).json({ msg: "logged in" });

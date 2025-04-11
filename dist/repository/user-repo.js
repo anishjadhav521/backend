@@ -47,10 +47,15 @@ class userRepo {
     }
     getUsers(username) {
         return __awaiter(this, void 0, void 0, function* () {
-            const users = yield profileRepository.createQueryBuilder('profile').
-                where("profile.userName LIKE :name", { name: `%${username}%` })
+            //  const users =  await profileRepository.createQueryBuilder('profile').
+            //  where("profile.userName LIKE :name",{name: `%${username}%` }).andWhere({
+            //  })
+            //  .getMany();
+            const users = yield profileRepository.createQueryBuilder('profile')
+                .where("profile.userName LIKE :name", { name: `%${username}%` })
+                .andWhere("profile.status = :status", { status: false })
                 .getMany();
-            console.log(users);
+            console.log("users", users);
             return users;
         });
     }

@@ -48,7 +48,10 @@ export class Profile {
     comments:Comment[]
 
     @Column({nullable:true})
-    resetToken:string
+    status:boolean
+
+    // @Column({nullable:true})
+    // resetToken:string
 
     // @Column({nullable:true,type:"timestamp"})
     // resetTokenExpiry:Date   

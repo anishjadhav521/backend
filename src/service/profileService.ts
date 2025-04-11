@@ -6,6 +6,9 @@ import { User } from "../entities/user";
 import { id } from "../middleware/authMiddleware";
 import profileRepo from "../repository/profile-repo"
 import { AppError } from "../types/errorHandler";
+import { updateDto } from "../dto/updateDto";
+import { plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
 
 const userRepository = AppDataSource.getRepository(User)
 const profileRepository = AppDataSource.getRepository(Profile)
@@ -20,6 +23,20 @@ class profileService{
     }
 
     async updateUsername(body:any){
+
+
+       const updateProfileDto = plainToInstance(updateDto,body)
+
+       const error = await validate(updateProfileDto);
+
+       if(error.length){
+
+        throw  new AppError('invalid data',400);
+       }
+
+       console.log(updateProfileDto);
+       
+
 
         return await profileRepo.updateUsername( body.newUsername,body.profileId)
     }
@@ -152,16 +169,22 @@ class profileService{
 
     async getFollowers(profileId:any){
 
+
+
         const followers = await followRepository.find({
             where:{
                 following:{
-                    id:Number(profileId)
+                    id:Number(profileId),
+                    status:false
                 }
             },
             relations:{
                 followers:true
             }
         })
+
+        console.log(followers);
+        
 
         return followers
     }
@@ -171,7 +194,8 @@ class profileService{
         const followings = await followRepository.find({
             where:{
                 followers:{
-                    id:Number(profileId)
+                    id:Number(profileId),
+                    status:false
                 }
             },
             relations:{

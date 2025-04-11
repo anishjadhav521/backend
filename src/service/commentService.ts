@@ -90,12 +90,19 @@ class CommentService{
 
     deleteComment = async(commentId:any)=>{
 
+
+
         console.log(commentId);
         
 
         const comment = await commentRepository.delete({
             id:commentId
         })
+
+        if(!comment){
+
+            throw new AppError('internal server error ',500)
+        }
 
         return comment
 

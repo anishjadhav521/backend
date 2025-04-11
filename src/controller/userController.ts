@@ -1,11 +1,13 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import userRepo from "../repository/user-repo";
 import userService from "../service/userService"
 import { Any } from "typeorm";
 
 
 class userController {
-    getUserByUsername = async(req: Request, res: Response)=> {
+    getUserByUsername = async(req: Request, res: Response,next:NextFunction)=> {
+
+      try{
 
         console.log("get user by username");
         
@@ -15,6 +17,12 @@ class userController {
         console.log(user);
         
         res.json({"user":user})
+      }
+      catch(err){
+
+        next(err);
+
+      } 
     }
 
      getUser = async (req: any, res: any) =>{
@@ -35,14 +43,15 @@ class userController {
 
         const users = await userRepo.getUsers(username)
 
+        console.log(users);
+        
         res.status(200).json({"users":users})
-
-
 
     }
 
     getAll =async(req:any,res:any)=>{
 
+      
       const users = await userService.getAll();
 
       if(users){
@@ -56,14 +65,28 @@ class userController {
 
     }
 
-    deleteUser=async(req:any,res:any)=>{
+    deleteUser=async(req:Request,res:Response,next:NextFunction)=>{
 
-        console.log("delete hitted");
+
+    try{
+
+      console.log("delete hitted");
         
+      const profileId = req.params['userId']
+ 
+      await userService.deleteUser(profileId)
 
-       const profileId = req.params['userId']
+      res.status(200).json({msg:'deleted'})
+    }
+    catch(err){
 
-       const result = await userService.deleteUser(profileId)
+
+        next(err)
+
+      }
+      
+
+
 
 
 

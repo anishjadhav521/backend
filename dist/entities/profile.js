@@ -70,8 +70,8 @@ __decorate([
 ], Profile.prototype, "comments", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
-], Profile.prototype, "resetToken", void 0);
+    __metadata("design:type", Boolean)
+], Profile.prototype, "status", void 0);
 exports.Profile = Profile = __decorate([
     (0, typeorm_1.Entity)({ name: "profile5003" })
 ], Profile);

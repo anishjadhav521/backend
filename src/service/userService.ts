@@ -6,6 +6,7 @@ import { User } from "../entities/user"
 import { Post } from "../entities/post"
 import { Likes } from "../entities/like"
 import { Role } from "../enums/enum"
+import { AppError } from "../types/errorHandler"
 
 const profileRepository = AppDataSource.getRepository(Profile)
 const userRepository = AppDataSource.getRepository(User)
@@ -24,7 +25,9 @@ class userService{
 
     async getUserByUsername(username:string){
 
-        return await profileRepository.findOne({
+
+
+        const user = await profileRepository.findOne({
 
             relations:{
 
@@ -42,6 +45,17 @@ class userService{
                 userName : username
             }            
         })
+        console.log("usr",username);
+        console.log("ansh",user);
+        
+        
+
+    if(!user){
+
+        throw new AppError('not found',400)
+        
+    }
+    return user
 
     }
 
@@ -49,12 +63,13 @@ class userService{
 
        let users = await profileRepository.find({
         where:{
-            role:Role.User
+            role:Role.User,
+            status:false    
         }
        })
 
 
-       console.log(users);
+       console.log("romr all users",users);
        
 
        return users
@@ -63,15 +78,13 @@ class userService{
 
     async deleteUser(profileId:any){
 
-        try {
             const profile = await profileRepository.findOne({
                 where: { id: profileId },
             });
 
             
             if (!profile) {
-                console.log("Profile not found");
-                return;
+                throw new AppError('not found',404)
             }
 
             const user = await userRepository.findOne({
@@ -85,11 +98,43 @@ class userService{
                 }
             })
 
-            console.log(user);
-            
-            postRepository.query('delete from  post5004 where user_id = @0',[user?.userId])
+            user!.status = true
+            user!.profile.status = true
 
+            await userRepository.save(user!)
+        }
+
+    }
+    export default new userService()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // console.log(user);
             
+            // postRepository.query('delete from  post5004 where user_id = @0',[user?.userId])
+
         //    const like = await likeRepository.findOneBy({post:user?.post})
 
         //    console.log(like);
@@ -100,22 +145,12 @@ class userService{
             // postRepository.delete({user:user!})
 
 
-            const result = await userRepository.delete({userId:user?.userId});
+            // const result = await userRepository.delete({userId:user?.userId});
 
-            console.log(result);
-        } 
-        catch (error) {
-            console.error("Error deleting user:", error);
-        }
+            // console.log(result);
         
-       
-
-
-    }
+    
 
     
 
 
-}
-
-export default new userService()

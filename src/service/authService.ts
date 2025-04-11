@@ -11,7 +11,7 @@ import { plainToInstance } from "class-transformer";
 import { SignUpDto } from "../dto/signupDto";
 import { validate, Validate } from "class-validator";
 import { loginDto } from "../dto/loginDto";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 export const secretKey = "ansh";
 
@@ -20,10 +20,9 @@ const profileRepo = AppDataSource.getRepository(Profile)
 
 class AuthService {
 
-    signUp = async (req: any, res: any) => {
+    signUp = async (req: Request, res: Response) => {
 
         const { userName, password, email, fullName, phoneNumber } = req.body;
-
 
         const userExist = await profileRepo.findOne({
             where:{
@@ -61,16 +60,18 @@ class AuthService {
         
 
         const profile = new Profile();
-        profile.email = email;
-        profile.phoneNumber = phoneNumber;
-        profile.userName = userName
+        profile.email = userDto.email;
+        profile.phoneNumber = userDto.phoneNumber;
+        profile.userName = userDto.userName
         profile.role = Role.User
+        profile.status = false
 
         const user = new User();
-        user.fullName = fullName;
-        user.phoneNumber = phoneNumber
-        user.password = password;
+        user.fullName = userDto.fullName;
+        user.phoneNumber = userDto.phoneNumber
+        user.password = userDto.password;
         user.role = Role.User
+        user.status = false
 
         user.profile = profile
         user.post = [];
@@ -79,9 +80,9 @@ class AuthService {
     };
 
 
-    logIn = async (req: Request, res: Response) => {
+    logIn = async (req: Request, res: Response, next : NextFunction) => {
         
-       
+    
         const credentialDto = plainToInstance(loginDto,req.body)
         const errors = await validate(credentialDto);
         if(errors.length){
@@ -99,6 +100,7 @@ class AuthService {
         if(isEmail){
 
             console.log(credentialDto.email);
+
             
             profile = await profileRepo.findOne({
                 
@@ -136,12 +138,12 @@ class AuthService {
         console.log(profile);
         
         
-        if (!profile) {
+        if (!profile || profile.status===true) {
 
             // res.status(400).j    son({ msg: "user not found" });
             console.log("profile err");
             
-            throw new AppError('user not found',404)
+            throw new AppError('user not found',404);
 
         } else {
             if (credentialDto.password === profile?.user.password) {
@@ -150,8 +152,8 @@ class AuthService {
                 res.cookie('authToken', tokenWtBearer,{
                     secure:true,
                     httpOnly:true,
-                    sameSite:'lax'
-                });
+                    sameSite:'lax',
+                    maxAge:60*60*1000});
                 console.log("success fullu");
                 
                 res.status(200).json({ msg: "logged in" });

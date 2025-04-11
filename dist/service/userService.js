@@ -20,6 +20,7 @@ const user_1 = require("../entities/user");
 const post_1 = require("../entities/post");
 const like_1 = require("../entities/like");
 const enum_1 = require("../enums/enum");
+const errorHandler_1 = require("../types/errorHandler");
 const profileRepository = config_1.default.getRepository(profile_1.Profile);
 const userRepository = config_1.default.getRepository(user_1.User);
 const postRepository = config_1.default.getRepository(post_1.Post);
@@ -34,7 +35,7 @@ class userService {
     }
     getUserByUsername(username) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield profileRepository.findOne({
+            const user = yield profileRepository.findOne({
                 relations: {
                     user: {
                         post: {
@@ -48,51 +49,55 @@ class userService {
                     userName: username
                 }
             });
+            console.log("usr", username);
+            console.log("ansh", user);
+            if (!user) {
+                throw new errorHandler_1.AppError('not found', 400);
+            }
+            return user;
         });
     }
     getAll() {
         return __awaiter(this, void 0, void 0, function* () {
             let users = yield profileRepository.find({
                 where: {
-                    role: enum_1.Role.User
+                    role: enum_1.Role.User,
+                    status: false
                 }
             });
-            console.log(users);
+            console.log("romr all users", users);
             return users;
         });
     }
     deleteUser(profileId) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const profile = yield profileRepository.findOne({
-                    where: { id: profileId },
-                });
-                if (!profile) {
-                    console.log("Profile not found");
-                    return;
+            const profile = yield profileRepository.findOne({
+                where: { id: profileId },
+            });
+            if (!profile) {
+                throw new errorHandler_1.AppError('not found', 404);
+            }
+            const user = yield userRepository.findOne({
+                where: {
+                    profile: profile,
+                },
+                relations: {
+                    profile: true,
+                    post: true
                 }
-                const user = yield userRepository.findOne({
-                    where: {
-                        profile: profile,
-                    },
-                    relations: {
-                        profile: true,
-                        post: true
-                    }
-                });
-                console.log(user);
-                postRepository.query('delete from  post5004 where user_id = @0', [user === null || user === void 0 ? void 0 : user.userId]);
-                //    const like = await likeRepository.findOneBy({post:user?.post})
-                //    console.log(like);
-                //    await likeRepository.delete({likeId:like?.likeId})
-                // postRepository.delete({user:user!})
-                const result = yield userRepository.delete({ userId: user === null || user === void 0 ? void 0 : user.userId });
-                console.log(result);
-            }
-            catch (error) {
-                console.error("Error deleting user:", error);
-            }
+            });
+            user.status = true;
+            user.profile.status = true;
+            yield userRepository.save(user);
         });
     }
 }
 exports.default = new userService();
+// console.log(user);
+// postRepository.query('delete from  post5004 where user_id = @0',[user?.userId])
+//    const like = await likeRepository.findOneBy({post:user?.post})
+//    console.log(like);
+//    await likeRepository.delete({likeId:like?.likeId})
+// postRepository.delete({user:user!})
+// const result = await userRepository.delete({userId:user?.userId});
+// console.log(result);

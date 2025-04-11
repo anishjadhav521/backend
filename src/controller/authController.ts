@@ -29,13 +29,14 @@ class authController {
             console.log("login hitted");
             
 
-            authService.logIn(req, res);
+            await authService.logIn(req, res, next);
             // res.status(200).json({msg:"logged in"})
 
         }
         catch(err){
 
-
+            // console.log(err);
+            
 
             next(err)
 
