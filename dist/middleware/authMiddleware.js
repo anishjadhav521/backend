@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.id = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const authService_1 = require("../service/authService");
+const errorHandler_1 = require("../types/errorHandler");
 const authentication = (req, res, next) => {
     console.log('middleware');
     const token = req.cookies.authToken;
@@ -26,10 +27,12 @@ const authentication = (req, res, next) => {
         });
     }
     else {
-        res.status(401).json({
-            success: false,
-            message: 'Token is not provided',
-        });
+        console.log("anish occured");
+        // res.status(401).json({
+        //     success: false,
+        //     message: 'Token is not provided',
+        // });
+        throw new errorHandler_1.AppError('token not provided', 401);
     }
 };
 exports.default = authentication;

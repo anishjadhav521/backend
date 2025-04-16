@@ -147,20 +147,21 @@ class AuthService {
 
         } else {
             if (credentialDto.password === profile?.user.password) {
-                const token = jwt.sign({ id: profile?.user.userId }, secretKey, { expiresIn: '1h' });
+                const token = jwt.sign({ id: profile?.user.userId }, secretKey, { expiresIn: '1 h' });
                 const tokenWtBearer = 'bearer ' + token;
                 res.cookie('authToken', tokenWtBearer,{
                     secure:true,
                     httpOnly:true,
                     sameSite:'lax',
-                    maxAge:60*60*1000});
+                    maxAge:10*1000});
                 console.log("success fullu");
                 
                 res.status(200).json({ msg: "logged in" });
             } else {
                 console.log("erroroororo");
                 
-                throw new AppError('wrong credential',401)
+                // throw new AppError('wrong credential',401)
+                res.status(401).json({msg:'token expiered'})
             }
         }
     };

@@ -1,4 +1,4 @@
-import express, { urlencoded } from "express"
+import express, { NextFunction, urlencoded } from "express"
 import AppDataSource from "./configuration/config";
 import cors from "cors"
 import cookieParser from "cookie-parser";
@@ -14,8 +14,11 @@ import { globalErrorHandler } from "./middleware/error";
 import { error, log } from "console";
 
 const app = express();
-const port = 200;
+const port = process.env.PORT;
 app.use(cookieParser())
+
+// console.log(process.env);
+
 
 const server = createServer(app);
 
@@ -59,11 +62,14 @@ AppDataSource.initialize().then(
 
 
     (error)=>{
-            console.log(error);
-            
+
+        // next(error);
+        // console.log(error);
+        console.log(error);
+        
+        
         
     }
-    
 )
 
 
@@ -105,5 +111,3 @@ io.on("connection",(socket)=>{
         
     })
 })
-
-

@@ -46,7 +46,7 @@ routes.patch('/updatePassword', authMiddleware_1.default, profileController_1.de
 routes.patch('/updateProfile', authMiddleware_1.default, upload.single('file'), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        console.log("hited update profilepoic");
+        // console.log("hited update profilepoic");
         let path = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
         yield profileController_1.default.updateProfilePic(path);
         res.status(200).json({ msg: 'profile updated successfully' });

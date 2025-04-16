@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken"
 import { secretKey } from "../service/authService";
 import { Request } from "express";
 import { Response } from "express";
+import { log } from "console";
+import { AppError } from "../types/errorHandler";
 
 export let id: number
 
@@ -32,10 +34,16 @@ const authentication = (req: Request, res: Response, next: () => void) => {
         })
     }
     else {
-        res.status(401).json({
-            success: false,
-            message: 'Token is not provided',
-        });
+
+        console.log("anish occured");
+        
+        // res.status(401).json({
+
+        //     success: false,
+        //     message: 'Token is not provided',
+        // });
+
+        throw new AppError('token not provided',401)
     }
 }
 

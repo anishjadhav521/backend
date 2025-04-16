@@ -24,8 +24,9 @@ const socket_io_1 = require("socket.io");
 const message_1 = require("./entities/message");
 const error_1 = require("./middleware/error");
 const app = (0, express_1.default)();
-const port = 200;
+const port = process.env.PORT;
 app.use((0, cookie_parser_1.default)());
+// console.log(process.env);
 const server = (0, http_1.createServer)(app);
 const io = new socket_io_1.Server(server, {
     cors: {
@@ -48,6 +49,8 @@ config_1.default.initialize().then(() => {
         console.log("listening on port ", port);
     });
 }).catch((error) => {
+    // next(error);
+    // console.log(error);
     console.log(error);
 });
 io.on("connection", (socket) => {

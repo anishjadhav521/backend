@@ -109,20 +109,21 @@ class AuthService {
             }
             else {
                 if (credentialDto.password === (profile === null || profile === void 0 ? void 0 : profile.user.password)) {
-                    const token = jsonwebtoken_1.default.sign({ id: profile === null || profile === void 0 ? void 0 : profile.user.userId }, exports.secretKey, { expiresIn: '1h' });
+                    const token = jsonwebtoken_1.default.sign({ id: profile === null || profile === void 0 ? void 0 : profile.user.userId }, exports.secretKey, { expiresIn: '1 h' });
                     const tokenWtBearer = 'bearer ' + token;
                     res.cookie('authToken', tokenWtBearer, {
                         secure: true,
                         httpOnly: true,
                         sameSite: 'lax',
-                        maxAge: 60 * 60 * 1000
+                        maxAge: 10 * 1000
                     });
                     console.log("success fullu");
                     res.status(200).json({ msg: "logged in" });
                 }
                 else {
                     console.log("erroroororo");
-                    throw new errorHandler_1.AppError('wrong credential', 401);
+                    // throw new AppError('wrong credential',401)
+                    res.status(401).json({ msg: 'token expiered' });
                 }
             }
         });
